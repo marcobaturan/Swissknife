@@ -7,6 +7,7 @@ _date_ = '05/02/2020'
 # imports
 from re import sub
 from math import ceil
+from functools import reduce
 
 """Put here the documentation. TODO:... Follow PEP8. """  # Documentation
 # https://devguide.python.org/documenting/ 
@@ -279,6 +280,60 @@ def compose(*fns):
     """
     return reduce(lambda f, g: lambda *args: f(g(*args)), fns)
 
+
+def compose_right(*fns):
+    """Performs left-to-right function composition.
+
+    Use functools.reduce() to perform left-to-right
+    function composition. The first (leftmost) function
+    can accept one or more arguments; the remaining
+    functions must be unary.
+    
+    Example:
+        add = lambda x, y: x + y
+        square = lambda x: x * x
+        add_and_square = compose_right(add,square)
+
+        add_and_square(1, 2) # 9
+    
+    """
+    return reduce(lambda f, g: lambda *args: g(f(*args)), fns)
+
+def count_by(arr, fn=lambda x: x):
+    """from math import floor
+        count_by([6.1, 4.2, 6.3], floor) # {6: 2, 4: 1}
+        count_by(['one', 'two', 'three'], len) # {3: 2, 5: 1}
+    """
+    key = {}
+    for el in map(fn, arr):
+        key[el] = 1 if el not in key else key[el] + 1
+    return key
+
+def count_occurrences(lst, val):
+    """Counts the occurrences of a value in a list.
+
+        Increment a counter for every item in the
+        list that has the given value and is of the same type.
+    """
+    return len([x for x in lst if x == val and type(x) == type(val)])
+
+from functools import partial
+
+def curry(fn, *args):
+    """Curries a function.
+
+        Use functools.partial() to return a new partial
+        object which behaves like fn with the given arguments,
+        args, partially applied.
+        
+        add = lambda x, y: x + y
+        add10 = curry(add, 10)
+
+        add10(20) # 30
+        
+    """
+    
+    return partial(fn,*args)
 
 if __name__ == "__main__":
     # Erase pass and call class or functions here.
