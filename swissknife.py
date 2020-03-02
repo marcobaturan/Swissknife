@@ -2,6 +2,7 @@
 # _*_import: utf-8 _*_
 # Please, do not forget try comment and document under pep8.
 # https://www.python.org/dev/peps/pep-0008/
+# https://github.com/Xiams1921/how_to_think_like_a_computer_scientist_learning_with_python_3
 _author_ = 'Marco Baturan'
 _date_ = '05/02/2020'
 import math
@@ -926,6 +927,521 @@ def zip_groups(*args, fillvalue=None):
             args[k][i] if i < len(args[k]) else fillvalue for k in range(len(args))
         ])
     return result
+
+def add_vectors(u, v):
+    new_list = list()
+    for i in range(len(u)):
+        new_list.append(u[i] + v[i])
+    return new_list
+
+
+def scalar_mult(s, v):
+    new_list = list()
+    for i in v:
+        new_list.append(s * i)
+    return new_list
+
+def dot_product(u, v):
+    sum = 0
+    for i in range(len(u)):
+        sum = sum + u[i] * v[i]
+    return sum
+def share_diagonal(x0, y0, x1, y1):
+    dy = abs(y1 - y0)
+    dx = abs(x1 - x0)
+    if dy == dx:
+        return True
+    return False
+
+def col_clashes(bs, c):
+    for i in range(c):
+        if share_diagonal(i, bs[i], c, bs[c]):
+            return True
+    return False
+
+def has_clashes(lst):
+    for i in range(1, len(lst)):
+        if col_clashes(lst, i):
+            return True
+    return False
+
+def is_diagonal(lst):
+    for i in range(1, len(lst)):
+        temp = lst[:i+1]
+        for j, num in enumerate(temp[:-1]):
+            a = abs(num - temp[-1])
+            b = abs(j - i)
+            if a == b:
+                return True
+    return False
+
+class Point:
+    
+    def __init__(self, x=0, y=0):
+        self.x = x
+        self.y = y
+        
+    def distance_from_origin(self):
+        return (self.x ** 2 + self.y ** 2) ** 0.5
+    
+    def __str__(self):
+        return '({}, {})'.format(self.x, self.y)
+
+    def reflect_x(self):
+        return Point(self.x, -self.y)
+    
+    def slope_from_origin(self):
+        return self.y / self.x
+    
+    def get_line_to(self, pt2):
+        a = (self.y - pt2.y) / (self.x - pt2.x)
+        b = self.y - a * self.x
+        return a, b
+    
+def distance(pt1, pt2):
+    return ((pt1.x - pt2.x) ** 2 + (pt1.y - pt2.y) ** 2) ** 0.5
+
+class SMS_store:
+    def __init__(self):
+        self.content = []
+ 
+    def add_new_arrival(self, from_number, time_arrived, text_of_SMS):
+        msg = (False, from_number, time_arrived, text_of_SMS)
+        self.content.append(msg)
+    
+    def message_count(self):
+        return len(self.content)
+    
+    def get_unread_indexes(self):
+        indexes_list = []
+        for i, msg in enumerate(self.content):
+            if msg[0] == False:
+                indexes_list.append(i)
+        return indexes_list
+    
+    def get_message(self, i):
+        if i < len(self.content):
+            self.content[i] = (True, self.content[i][1], self.content[i][2], self.content[i][3])
+            return self.content[i][1], self.content[i][2], self.content[i][3]
+        else:
+            return None
+    
+    def delete(self, i):
+        self.content.pop(i)
+    
+    def clear(self):
+        self.content = []
+
+class Rectangle:
+    
+    def __init__(self, posn, w, h):
+        self.corner = posn
+        self.width = w
+        self.height = h
+    
+    def __str__(self):
+        return "{}, {}, {}".format(self.corner, self.width, self.height)
+    
+    def grow(self, delta_width, delta_height):
+        self.width += delta_width
+        self.height += delta_height
+        
+    def move(self, dx, dy):
+        self.corner.x += dx
+        self.corner.y += dy
+        
+    def area(self):
+        return self.width * self.height
+    
+    def perimeter(self):
+        return (self.height + self.width) * 2
+    
+    def flip(self):
+        (self.width, self.height) = (self.height, self.width)
+    
+    def contains(self, pt):
+        x_upper = self.corner.x +self.width
+        x_lower = self.corner.x
+        y_upper = self.corner.y +self.height
+        y_lower = self.corner.y
+        return x_lower <= pt.x < x_upper and y_lower <= pt.y <y_upper
+    
+def recursion_depth(number):
+    print("{0}, ".format(number), end="")   
+    recursion_depth(number + 1)
+
+def recursive_min(lst):
+    first_time = True
+    min = 0
+    result = 0
+    for i in lst:
+        if type(i) == type([]):
+            result = recursive_min(i)
+        else:
+            result = i
+        
+        if first_time or result < min:
+            min = result
+            first_time = False
+    return min
+
+def count(target, lst):
+    n = 0
+    for i in lst:
+        if type(i) == type([]):
+            n = count(target, i) + n
+        else:
+            if target == i:
+                n = n + 1
+    return n
+
+
+def get_dirlist(path):
+    dirlist = os.listdir(path)
+    dirlist.sort()
+    return dirlist
+
+
+def print_files(path, prefix = ''):
+    if prefix == '':
+        print('Folder listing for', path)
+        prefix = '| '
+        
+    dirlist = get_dirlist(path)
+    for f in dirlist:
+        print(prefix + f)
+        fullname = os.path.join(path, f)
+        if os.path.isdir(fullname):
+            print_files(fullname, prefix + '| ')
+
+def get_file_list(path):
+    file_list = []
+    dirlist = get_dirlist(path)
+    for f in dirlist:
+        fullname = os.path.join(path, f)
+        if not os.path.isdir(fullname):
+            file_list.append(fullname)
+        else:
+            file_list.extend(get_file_list(fullname))
+    return file_list
+
+def litter(path):
+    dirlist = get_dirlist(path)
+    for f in dirlist:
+        fullname = os.path.join(path, f)
+        if os.path.isdir(fullname):
+            litter(fullname)
+            fullname = os.path.join(fullname, 'trash.txt')
+            print('file created: {}'.format(fullname))
+            file = open(fullname, 'w')
+            file.close()
+            
+def delete(path):
+    dirlist = get_dirlist(path)
+    for f in dirlist:
+        fullname = os.path.join(path, f)
+        if os.path.isdir(fullname):
+            delete(fullname)
+            fullname = os.path.join(fullname, 'trash.txt')
+            if os.path.exists(fullname):
+                os.remove(fullname)
+                print('file removed:{}'.format(fullname))
+            else:
+                print('no such files!')
+                
+
+def recursion_depth(number):
+    print("Recursion depth number", number)
+    try:
+        recursion_depth(number + 1)
+    except:
+        print("I cannot go any deeper into this wormhole.")
+        
+def readposint():
+    temp = input()
+    try:
+        temp = int(temp)
+    except:
+        print('wrong')
+
+def recursion_depth(number):
+    print("Recursion depth number", number)
+    try:
+        recursion_depth(number + 1)
+    except:
+        print("I cannot go any deeper into this wormhole.")
+
+def count_letter(string):
+    count_dict = {}
+    for i in string.lower():
+        count_dict[i] = count_dict.get(i, 0) + 1
+    count_dict.pop(' ')
+    count_list = list(count_dict.items())
+    count_list.sort()
+    return count_list
+
+
+class MyTime:
+    def __init__(self, hrs=0, mins=0, secs=0):
+        totalsecs = hrs*3600 + mins*60 + secs
+        self.hours = totalsecs // 3600 # Split in h, m, s
+        leftoversecs = totalsecs % 3600
+        self.minutes = leftoversecs // 60
+        self.seconds = leftoversecs % 60
+        
+    def to_seconds(self):
+        return self.hours * 3600 + self.minutes * 60 + self.seconds
+    
+    def between(self, t1, t2):
+        return t1.to_seconds() <= self.to_seconds() < t2.to_seconds()
+    
+    def __gt__(self, other):
+        return self.to_seconds() > other.to_seconds()
+    
+    def increment(self, seconds):
+        total_secs = self.to_seconds() + seconds
+        return MyTime(0, 0, total_secs)
+    
+    def __str__(self):
+        return str(self.hours) + ' ' + str(self.minutes) + ' ' + str(self.seconds)
+
+class Node:
+    def __init__(self, cargo=None, next=None):
+        self.cargo = cargo
+        self.next = next
+    
+    def __str__(self):
+        return str(self.cargo)
+    
+    def print_backward(self):
+        if self.next is not None:
+            tail = self.next
+            tail.print_backward()
+        print(self.cargo, end=' ')
+    
+def print_list(node):
+    print("[", end ='')
+    while node is not None:
+        print(node, end='')
+        if node.next is not None:
+            print(',', end =' ')
+        node = node.next
+    print(']')
+    
+
+def print_backward(list):
+    if list is None: return
+    head = list
+    tail = list.next
+    print_backward(tail)
+    print(head, end=' ')
+
+def remove_second(list):
+    if list is None: return
+    first = list
+    second = list.next
+    first.next = second.next
+    second.next = None
+    return second
+
+class LinkedList:
+    def __init__(self):
+        self.length = 0
+        self.head = None
+        
+    def print_backward(self):
+        print("[", end=" ")
+        if self.head is not None:
+            self.head.print_backward()
+        print("]")
+
+    def add_first(self, cargo):
+        node = Node(cargo)
+        node.next = self.head
+        self.head = node
+        self.length += 1
+        
+def how_many_odd_nums(lst):
+    count = 0
+    for i in lst:
+        if i % 2 == 1:
+            count = count + 1
+    return count
+
+def sum_all_even_nums(lst):
+    sum_1 = 0
+    for i in lst:
+        if i % 2 == 0:
+            sum_1 = sum_1 + i
+    return sum_1
+
+def sum_all_negative_nums(lst):
+    sum_2 = 0
+    for i in lst:
+        if i < 0:
+            sum_2 = sum_2 + i
+    return sum_2
+
+def count_length_5(lst):
+    count = 0
+    for i in lst:
+        if len(i) == 5:
+            count = count + 1
+    return count
+
+def sum_all_but_first_even(lst):
+    count = 0
+    sum_3 = 0
+    for i in lst:
+        if i % 2 == 0 and count == 0:
+            count = 1
+            continue
+        sum_3 = sum_3 + i
+    return sum_3
+
+def find_sam(lst):
+    count = 0
+    for i in lst:
+        count = count + 1
+        if i == 'sam':
+            break
+    if count == len(lst) and i !='sam':
+        return 0
+    else:
+        return count
+
+def newton_sqrt(num):
+    guess = num / 2.0
+    while True:
+        better = (guess + num/guess) / 2.0
+        if abs(better - guess) < 0.0001:
+            return better
+        guess = better
+        print("better")
+
+def print_triangular_numbers(n):
+    for i in range(1, n+1):
+        sum_1 = 0
+        for j in range(i+1):
+            sum_1 = sum_1 + j
+        print(i, '\t', sum_1)
+
+def is_prime(n):
+    if n == 1:
+        return False
+    elif n == 2:
+        return True
+    else:
+        for i in range(2, n):
+            if n % i == 0:
+                return False
+        return True
+
+
+def num_digits(n):
+    if n == 0:
+        return 1    
+    n_1 = abs(n)
+    count = 0
+    while n_1 // (10**count) != 0:
+        count = count + 1
+    return count
+
+def num_even_digits(n):
+    num_str = str(n)
+    count = 0
+    for i in num_str:
+        if int(i) % 2 == 0:
+            count = count + 1
+    return count
+
+def sum_of_squares(xs):
+    sum_1 = 0
+    for i in xs:
+        sum_1 = sum_1 + i**2
+    return sum_1
+
+def count_letters(string, letter, location=0):
+    count = 0
+    start = location
+    while True:
+        start = string.find(letter, start) + 1
+        if start == 0:
+            break
+        count = count + 1
+    if count == 0:
+        return -1
+    return count
+
+def func_1(string):
+    import string
+    new_para = ''
+    for i in para:
+        if i not in string.punctuation:
+            new_para = new_para + i
+    word_list = new_para.split()
+    count_1 = len(word_list)
+    count_2 = 0
+    for i in word_list:
+        if 'e' in i:
+            count_2 = count_2 + 1
+    print('Your text contains {} words, of which {} ({:.2f}%) contain an "e".'.format(count_1, count_2, count_2/count_1*100))
+    
+def reverse(string):
+    new_string = ''
+    for i in range(len(string)):
+        new_string = new_string + string[-(i+1)]
+    return new_string
+
+
+def mirror(string):
+    return string + reverse(string)
+
+def remove_letter(letter, string):
+    new_string = ''
+    for i in string:
+        if i != letter:
+            new_string = new_string + i
+    return new_string
+
+def count_how_many(word, string):
+    x=len(word)
+    string_list = [string[i:x+i] for i in range(len(string)-x+1)]
+    count = 0
+    for i in string_list:
+        if i == word:
+            count = count + 1
+    return count
+
+def remove(word, string):
+    if word not in string:
+        return string
+    else:
+        x=len(word)
+        string_list = [string[i:x+i] for i in range(len(string)-x+1)]
+        new_string = ''
+        for i, letter in enumerate(string_list):
+            if letter == word:
+                break
+            new_string = new_string + letter[0]
+        new_string = new_string + string[i+x:]
+        return new_string
+   
+def remove_2(word, string):
+    n = string.find(word)
+    x = len(word)
+    if n == -1:
+        return string
+    else:
+        return string[:n] + string[n+x:]
+    
+def remove_all(word, string):
+    temp = string
+    while True:
+        temp = remove_2(word, temp)
+        if temp.find(word) == -1:
+            break
+    return temp
 
 
 if __name__ == "__main__":
