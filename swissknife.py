@@ -1299,13 +1299,13 @@ def sum_all_but_first_even(lst):
         sum_3 = sum_3 + i
     return sum_3
 
-def find_sam(lst):
+def find_word_list(lst, word):
     count = 0
     for i in lst:
         count = count + 1
-        if i == 'sam':
+        if i == word:
             break
-    if count == len(lst) and i !='sam':
+    if count == len(lst) and i !=word:
         return 0
     else:
         return count
